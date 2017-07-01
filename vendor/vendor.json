@@ -1,0 +1,61 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "jbk1I1h+yfu+3CmaZNymxd8G6HI=",
+			"path": "github.com/caarlos0/env",
+			"revision": "0cf029d5748c52beb2c9d20c81880cb4bdf8f788",
+			"revisionTime": "2017-06-15T15:37:31Z"
+		},
+		{
+			"checksumSHA1": "VIp1lZm6joWhlNdwhady8u//qRw=",
+			"path": "github.com/jinzhu/inflection",
+			"revision": "1c35d901db3da928c72a72d8458480cc9ade058f",
+			"revisionTime": "2017-01-02T12:52:26Z"
+		},
+		{
+			"checksumSHA1": "gKyBj05YkfuLFruAyPZ4KV9nFp8=",
+			"path": "github.com/julienschmidt/httprouter",
+			"revision": "975b5c4c7c21c0e3d2764200bf2aa8e34657ae6e",
+			"revisionTime": "2017-04-30T22:20:11Z"
+		},
+		{
+			"checksumSHA1": "8DfQVDfvlHEvf76s3zxq5GDm2HM=",
+			"path": "gopkg.in/pg.v5",
+			"revision": "2246060a2a43f8282ad53295d56d780dbc930b7f",
+			"revisionTime": "2017-03-04T09:17:45Z"
+		},
+		{
+			"checksumSHA1": "GU96EzwooQAEVrn3Nbds5cIVTEs=",
+			"path": "gopkg.in/pg.v5/internal",
+			"revision": "2246060a2a43f8282ad53295d56d780dbc930b7f",
+			"revisionTime": "2017-03-04T09:17:45Z"
+		},
+		{
+			"checksumSHA1": "YKAX0F+dtXUknGl8YMx2kL2bejs=",
+			"path": "gopkg.in/pg.v5/internal/parser",
+			"revision": "2246060a2a43f8282ad53295d56d780dbc930b7f",
+			"revisionTime": "2017-03-04T09:17:45Z"
+		},
+		{
+			"checksumSHA1": "00QhzRJ/rhI92krMNdD6QKscCPU=",
+			"path": "gopkg.in/pg.v5/internal/pool",
+			"revision": "2246060a2a43f8282ad53295d56d780dbc930b7f",
+			"revisionTime": "2017-03-04T09:17:45Z"
+		},
+		{
+			"checksumSHA1": "nmlbFq2U5TzHet3KhWKBs5AYe9I=",
+			"path": "gopkg.in/pg.v5/orm",
+			"revision": "2246060a2a43f8282ad53295d56d780dbc930b7f",
+			"revisionTime": "2017-03-04T09:17:45Z"
+		},
+		{
+			"checksumSHA1": "dD6XEhVYH6ju4iQ1njLyPSZqWeo=",
+			"path": "gopkg.in/pg.v5/types",
+			"revision": "2246060a2a43f8282ad53295d56d780dbc930b7f",
+			"revisionTime": "2017-03-04T09:17:45Z"
+		}
+	],
+	"rootPath": "github.com/social-tournament-service"
+}
