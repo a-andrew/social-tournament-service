@@ -33,26 +33,3 @@ func ResError(err error) (int, ResErrorJson){
 	er := err.(Error)
 	return er.Code, ResErrorJson{Msg: er.Msg}
 }
-
-/*
-func NewNotFoundOrInternalError(err string) (int, ResError){
-	if strings.Contains(err, NOT_FOUND_SUBSTRING){
-		return codes.StatusNotFound, ResError{
-			Msg: err,
-		}
-	}
-
-	return NewInternalError(err)
-}
-
-func NewBadRequestError1(err string) (int, ResError){
-	return codes.StatusBadRequest, ResError{
-		Msg: err,
-	}
-}
-
-func NewInternalError1(err string) (int, ResError){
-	return codes.StatusInternalServerError, ResError{
-		Msg: err,
-	}
-}*/
