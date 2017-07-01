@@ -11,12 +11,11 @@ Clone project from github into local directory using command: `git clone https:/
 
 OR
 
-Pull build from hub.docker.com using command: `docker pull aandrew3/social-tournament-service`
-along with `docker-compose.yml` file and put sources into local directory
+Get just `docker-compose.yml` here [https://github.com/a-andrew/social-tournament-service/blob/master/docker-compose.yml]`
 *************************************
 
 ### Up
-Go to folder with the service and run service using `docker-compose up`
+Go to folder with the service or only `docker-compose` file and run service using `docker-compose up`
 Then site will be run on host [http://127.0.0.1]
 
 ## Endpoints description
