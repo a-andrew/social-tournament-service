@@ -11,7 +11,8 @@ Clone project from github into local directory using command: `git clone https:/
 
 OR
 
-Get just `docker-compose.yml` here [https://github.com/a-andrew/social-tournament-service/blob/master/docker-compose.yml]`
+Get just `docker-compose.yml` here [https://github.com/a-andrew/social-tournament-service/blob/master/docker-compose.yml]
+Also you can pull build from hub.docker.com [https://hub.docker.com/r/aandrew3/social-tournament-service/]
 *************************************
 
 ### Up
