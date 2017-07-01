@@ -45,10 +45,6 @@ func initDB() (*pg.DB, error) {
 		return nil, err
 	}
 	
-	fmt.Println("\n\n\n")
-	fmt.Printf("%+v\n", dbCfg)
-	fmt.Println("\n\n\n")
-	
 	db := pg.Connect(&pg.Options{
 		Database: dbCfg.DbName,
 		Addr: fmt.Sprintf("%s:%s", dbCfg.DbHost, dbCfg.DbPort),
