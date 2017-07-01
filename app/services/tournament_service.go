@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/social-tournament-service/app/daos"
 	"github.com/social-tournament-service/app/models"
-	"errors"
+	errors "github.com/social-tournament-service/app/http"
 	"fmt"
 	"gopkg.in/pg.v5"
 )
@@ -31,7 +31,7 @@ func (s *TournamentService) Join(tournamentId, playerId string, backerIds []stri
 	backerIds = getUniqueMemberIds(backerIds)
 	
 	if playerIsBacker(playerId, backerIds){
-		return errors.New("Player can't be player and backer in one tournament")
+		return errors.NewBadRequestError("Player can't be player and backer in one tournament")
 	}
 	
 	memberIds := append(backerIds, playerId)
@@ -63,14 +63,14 @@ func (s *TournamentService) Result(result *models.TournamentResultJson) error{
 func (s *TournamentService) validateForJoining(tournamentId string, memberIds []string) error{
 	//does tournament exist
 	if !s.tournamentDao.ExistsAndNotFinished(&models.Tournament{Id: tournamentId}){
-		return errors.New(fmt.Sprintf("Tournament with ID `%s` not found or is already finished", tournamentId))
+		return errors.NewNotFoundError(fmt.Sprintf("Tournament with ID `%s` not found or is already finished", tournamentId))
 	}
 	
 	//validate members
 	for _, memberId := range memberIds{
 		//does member exist
 		if !s.playerDao.Exists(&models.Player{Id: memberId}){
-			return errors.New(fmt.Sprintf("Member with ID `%s` not found", memberId))
+			return errors.NewNotFoundError(fmt.Sprintf("Member with ID `%s` not found", memberId))
 		}
 
 		tBacker := &models.TournamentPlayer{
@@ -80,12 +80,12 @@ func (s *TournamentService) validateForJoining(tournamentId string, memberIds []
 		
 		//has member already joined to the tournament as a player
 		if s.tournamentDao.IsJoinedAsPlayer(tBacker){
-			return errors.New(fmt.Sprintf("Member with ID `%s` already has joided as a player to tournament with ID `%s`", memberId, tournamentId))
+			return errors.NewBadRequestError(fmt.Sprintf("Member with ID `%s` already has joided as a player to tournament with ID `%s`", memberId, tournamentId))
 		}
 
 		//has member already joined to the tournament as a backer
 		if s.tournamentDao.IsJoinedAsBacker(tBacker){
-			return errors.New(fmt.Sprintf("Member with ID `%s` already has joided as a backer to tournament with ID `%s`", memberId, tournamentId))
+			return errors.NewBadRequestError(fmt.Sprintf("Member with ID `%s` already has joided as a backer to tournament with ID `%s`", memberId, tournamentId))
 		}
 	}
 	
@@ -95,18 +95,18 @@ func (s *TournamentService) validateForJoining(tournamentId string, memberIds []
 func (s *TournamentService) validateForRewarding(result *models.TournamentResultJson) error{
 	//does tournament exist
 	if !s.tournamentDao.ExistsAndNotFinished(&models.Tournament{Id: result.TournamentId}){
-		return errors.New(fmt.Sprintf("Tournament with ID `%s` not found or is already finished", result.TournamentId))
+		return errors.NewNotFoundError(fmt.Sprintf("Tournament with ID `%s` not found or is already finished", result.TournamentId))
 	}
 
 	//does tournament announced (started)
 	if !s.tournamentDao.IsStarted(&models.TournamentPlayer{TournamentId: result.TournamentId}){
-		return errors.New(fmt.Sprintf("Tournament with ID `%s` is not started yet", result.TournamentId))
+		return errors.NewBadRequestError(fmt.Sprintf("Tournament with ID `%s` is not started yet", result.TournamentId))
 	}
 
 	//does everyone winner exist
 	for _, winner := range result.Winners{
 		if !s.playerDao.Exists(&models.Player{Id: winner.PlayerId}){
-			return errors.New(fmt.Sprintf("Winner with ID `%s` not found", winner.PlayerId))
+			return errors.NewNotFoundError(fmt.Sprintf("Winner with ID `%s` not found", winner.PlayerId))
 		}
 	}
 	
@@ -136,7 +136,7 @@ func (s *TournamentService) rewardWinners(txn *pg.Tx, result *models.TournamentR
 		}
 		
 		if winner.Prize < 0{
-			return errors.New("Tournament prize should not be less than zero")
+			return errors.NewBadRequestError("Tournament prize should not be less than zero")
 		}
 
 		data := &models.TournamentPlayer{
@@ -190,7 +190,7 @@ func (s *TournamentService) getMembersBalance(memberIds []string) ([]*models.Pla
 func (s *TournamentService) checkIfPlayersCanPayEntryFee(entryFee int, tournamentId string, members []*models.Player) error {
 	for _, member := range members{		
 		if member.Points < entryFee{
-			return errors.New(fmt.Sprintf("Member with ID `%s` doesn't have enough points to pay entry fee", member.Id))
+			return errors.NewBadRequestError(fmt.Sprintf("Member with ID `%s` doesn't have enough points to pay entry fee", member.Id))
 		}
 	}
 	

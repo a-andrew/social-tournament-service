@@ -3,8 +3,8 @@ package daos
 import (
 	"gopkg.in/pg.v5"
 	"github.com/social-tournament-service/app/models"
+	errors "github.com/social-tournament-service/app/http"
 	"strings"
-	"errors"
 	"fmt"
 )
 
@@ -17,10 +17,10 @@ func (d *TournamentDao) Create(tournament *models.Tournament) error{
 	err := d.db.Insert(tournament)
 	if err != nil{
 		if strings.Contains(err.Error(), "duplicate key value"){
-			return errors.New(fmt.Sprintf("Tournament with ID `%s` already exists", tournament.Id))
+			return errors.NewBadRequestError(fmt.Sprintf("Tournament with ID `%s` already exists", tournament.Id))
 		}
 		
-		return err
+		return errors.NewInternalError(err.Error())
 	}
 	
 	return nil
@@ -35,10 +35,10 @@ func (d *TournamentDao) Get(tournament *models.Tournament, columns ...string) er
 
 	if err := model.Where("id = ?id").Select(); err != nil{
 		if err.Error() == "pg: no rows in result set"{
-			return errors.New(fmt.Sprintf("Tournament with ID `%s` not found", tournament.Id))
+			return errors.NewNotFoundError(fmt.Sprintf("Tournament with ID `%s` not found", tournament.Id))
 		}
 
-		return err
+		return errors.NewInternalError(err.Error())
 	}
 
 	return nil
@@ -57,10 +57,10 @@ func (d *TournamentDao) GetData(tournamentPlayer *models.TournamentPlayer, colum
 
 	if err := model.Where("tournamentid = ?tournamentid and playerid = ?playerid").Select(); err != nil{
 		if err.Error() == "pg: no rows in result set"{
-			return errors.New(fmt.Sprintf("Tournament with ID `%s` is not started", tournamentPlayer.TournamentId))
+			return errors.NewNotFoundError(fmt.Sprintf("Tournament with ID `%s` is not started", tournamentPlayer.TournamentId))
 		}
 
-		return err
+		return errors.NewInternalError(err.Error())
 	}
 
 	return nil
@@ -122,24 +122,28 @@ func (d *TournamentDao) IsJoinedAsBacker(tournamentPlayer *models.TournamentPlay
 func (d *TournamentDao) CreateTournamentPlayer(tournamentPlayer *models.TournamentPlayer) error{
 	err := d.db.Insert(tournamentPlayer)
 	if err != nil{
-		return err
+		return errors.NewInternalError(err.Error())
 	}
 
 	return nil
 }
 
 func (d *TournamentDao) CreateTournamentPlayerTxn(txn *pg.Tx, tournamentPlayer *models.TournamentPlayer) error{
-	return txn.Insert(tournamentPlayer)
+	if err := txn.Insert(tournamentPlayer); err != nil{
+		return errors.NewInternalError(err.Error())
+	}
+	
+	return nil
 }
 
 func (d *TournamentDao) FinishTxn(txn *pg.Tx, tournament *models.Tournament) error{
 	res, err := txn.Model(tournament).Column("finished").Update()
 	if err != nil {
-		return err
+		return errors.NewInternalError(err.Error())
 	}
 
 	if res.RowsAffected() == 0{
-		return errors.New(fmt.Sprintf("Tournament with ID `%s` not found", tournament.Id))
+		return errors.NewNotFoundError(fmt.Sprintf("Tournament with ID `%s` not found", tournament.Id))
 	}
 	
 	return nil

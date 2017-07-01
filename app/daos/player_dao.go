@@ -3,7 +3,7 @@ package daos
 import (
 	"gopkg.in/pg.v5"
 	"github.com/social-tournament-service/app/models"
-	"errors"
+	errors "github.com/social-tournament-service/app/http"
 	"fmt"
 )
 
@@ -20,10 +20,10 @@ func (d *PlayerDao) Get(player *models.Player, columns ...string) error{
 	
 	if err := model.Where("id = ?id").Select(); err != nil{
 		if err.Error() == "pg: no rows in result set"{
-			return errors.New(fmt.Sprintf("Player with ID `%s` not found", player.Id))
+			return errors.NewNotFoundError(fmt.Sprintf("Player with ID `%s` not found", player.Id))
 		}
 		
-		return err
+		return errors.NewInternalError(err.Error())
 	}
 	
 	return nil
@@ -38,7 +38,7 @@ func (d *PlayerDao) Upsert(player *models.Player) error{
 		OnConflict("(id) DO UPDATE").
 		Set("points = player.points + ?points").
 		Insert(); err != nil{
-		return err
+		return errors.NewInternalError(err.Error())
 	}
 
 	return nil
@@ -53,11 +53,11 @@ func (d *PlayerDao) Update(player *models.Player, columns ...string) error{
 
 	res, err := model.Update()
 	if err != nil {
-		return err
+		return errors.NewInternalError(err.Error())
 	}
 	
 	if res.RowsAffected() == 0{
-		return errors.New(fmt.Sprintf("Player with ID `%s` not found", player.Id))
+		return errors.NewNotFoundError(fmt.Sprintf("Player with ID `%s` not found", player.Id))
 	}
 
 	return nil
@@ -76,7 +76,7 @@ func (d *PlayerDao) UpdateTxn(txn *pg.Tx, player *models.Player, columns ...stri
 	}
 	
 	if res.RowsAffected() == 0{
-		return errors.New(fmt.Sprintf("Player with ID `%s` not found", player.Id))
+		return errors.NewNotFoundError(fmt.Sprintf("Player with ID `%s` not found", player.Id))
 	}
 
 	return nil
@@ -93,11 +93,11 @@ func (d *PlayerDao) UpdatePointsTxn(txn *pg.Tx, player *models.Player) error{
 func (d *PlayerDao) AddPointsTxn(txn *pg.Tx, player *models.Player) error{
 	res, err := txn.Model(player).Set("points = player.points + ?points").Update()
 	if err != nil {
-		return err
+		return errors.NewInternalError(err.Error())
 	}
 
 	if res.RowsAffected() == 0{
-		return errors.New(fmt.Sprintf("Player with ID `%s` not found", player.Id))
+		return errors.NewNotFoundError(fmt.Sprintf("Player with ID `%s` not found", player.Id))
 	}
 	
 	return nil

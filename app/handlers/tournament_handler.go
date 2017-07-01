@@ -26,15 +26,15 @@ func (h *TournamentHandler) announce(ctx *http.Context) (int, interface{}){
 
 	deposit, err := strconv.Atoi(depositStr)
 	if err != nil{
-		return http.NewBadRequestError("Could not convert `deposit` to int")
+		return http.ResError(http.NewBadRequestError("Could not convert `deposit` to int"))
 	}
 
 	if deposit < 0{
-		return http.NewBadRequestError("`deposit` must be greater than or equal zero")
+		return http.ResError(http.NewBadRequestError("`deposit` must be greater than or equal zero"))
 	}
 	
 	if err := h.service.Announce(tournamentId, deposit); err != nil{
-		return http.NewInternalError(err.Error())
+		return http.ResError(err)
 	}
 
 	return codes.StatusOK, struct{}{}
@@ -49,7 +49,7 @@ func (h *TournamentHandler) join(ctx *http.Context) (int, interface{}){
 	}
 	
 	if err := h.service.Join(params.Get("tournamentId"), params.Get("playerId"), backerIds); err != nil{
-		return http.NewInternalError(err.Error())
+		return http.ResError(err)
 	}
 
 	return codes.StatusOK, struct{}{}
@@ -60,7 +60,7 @@ func (h *TournamentHandler) result(ctx *http.Context) (int, interface{}){
 	ctx.ParseBody(body)
 	
 	if err := h.service.Result(body); err != nil{
-		return http.NewInternalError(err.Error())
+		return http.ResError(err)
 	}
 
 	return codes.StatusOK, body

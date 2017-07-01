@@ -24,9 +24,8 @@ func (r *Router) Get(rout string, handler handlerFunc, requiredUrlParams ...stri
 		urlQuery := req.URL.Query()
 		for _, p := range requiredUrlParams{
 			if v := urlQuery.Get(p); v == ""{
-				r.sendResponse(w, http.StatusBadRequest, ResError{
-					Msg: fmt.Sprintf("`%s` is required", p),
-				})
+				code, resError := ResError(NewBadRequestError(fmt.Sprintf("`%s` is required", p)))
+				r.sendResponse(w, code, resError)
 				
 				return
 			}

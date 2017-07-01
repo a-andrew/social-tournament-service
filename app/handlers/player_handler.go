@@ -25,11 +25,11 @@ func (h *PlayerHandler) take(ctx *http.Context) (int, interface{}){
 	
 	points, err := strconv.Atoi(pointsStr)
 	if err != nil{
-		return http.NewBadRequestError("Could not convert `points` to int")
+		return http.ResError(http.NewBadRequestError("Could not convert `points` to int"))
 	}
 	
 	if err := h.service.Take(playerId, points); err != nil{
-		return http.NewNotFoundOrInternalError(err.Error())
+		return http.ResError(err)
 	}
 
 	return codes.StatusOK, struct{}{}
@@ -41,11 +41,11 @@ func (h *PlayerHandler) fund(ctx *http.Context) (int, interface{}){
 	
 	points, err := strconv.Atoi(pointsStr)
 	if err != nil{
-		return http.NewBadRequestError("Could not convert `points` to int")
+		return http.ResError(http.NewBadRequestError("Could not convert `points` to int"))
 	}
 	
 	if err := h.service.Fund(playerId, points); err != nil{
-		return http.NewInternalError(err.Error())
+		return http.ResError(err)
 	}
 	
 	return codes.StatusOK, struct{}{}
@@ -53,9 +53,8 @@ func (h *PlayerHandler) fund(ctx *http.Context) (int, interface{}){
 
 func (h *PlayerHandler) balance(ctx *http.Context) (int, interface{}){
 	balance, err := h.service.Balance(ctx.GetUrlParams().Get("playerId"))
-	
 	if err != nil{
-		return http.NewNotFoundOrInternalError(err.Error())
+		return http.ResError(err)
 	}
 	
 	return codes.StatusOK, balance

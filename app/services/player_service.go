@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/social-tournament-service/app/daos"
 	"github.com/social-tournament-service/app/models"
-	"errors"
+	errors "github.com/social-tournament-service/app/http"
 )
 
 type PlayerService struct{
@@ -26,7 +26,7 @@ func (s *PlayerService) Take(playerId string, points int) error {
 	}
 	
 	if player.Points <= points{
-		return errors.New("Points can't be taken from player's because then his balance will be zero")
+		return errors.NewBadRequestError("Points can't be taken from player's because then his balance will be zero")
 	}
 	
 	player.Points -= points
@@ -41,7 +41,7 @@ func (s *PlayerService) Fund(playerId string, points int) error {
 	}
 	
 	if points <= 0 && !s.playerDao.Exists(player){
-		return errors.New("Player with zero points can't be created")
+		return errors.NewBadRequestError("Player with zero points can't be created")
 	}
 	
 	return s.playerDao.Upsert(player)
