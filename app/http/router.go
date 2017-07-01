@@ -57,6 +57,6 @@ func (r *Router) sendResponse(w http.ResponseWriter, code int, res interface{}){
 	json.NewEncoder(w).Encode(res)
 }
 
-func (r *Router) Serve() error{
-	return http.ListenAndServe(":8080", r.r)
+func (r *Router) Serve(port int) error{
+	return http.ListenAndServe(fmt.Sprintf(":%d", port), r.r)
 }

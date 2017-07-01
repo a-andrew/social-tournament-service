@@ -232,8 +232,8 @@ func (s *TournamentService) joinToTournament(tournamentId, playerId string, back
 func (s *TournamentService) takeEntryFeeFromMembers(txn *pg.Tx, entryFee int, members []*models.Player) error{
 	for _, member := range members{
 		member.Points -= entryFee
-		if member.Points < daos.MIN_PLAYER_POINTS_AMOUNT{
-			member.Points = daos.MIN_PLAYER_POINTS_AMOUNT
+		if member.Points < s.tournamentDao.MinPlayerPointsAmount{
+			member.Points = s.tournamentDao.MinPlayerPointsAmount
 		}
 		
 		if err := s.playerDao.UpdatePointsTxn(txn, member); err != nil{

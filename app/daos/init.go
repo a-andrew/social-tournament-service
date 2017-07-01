@@ -1,19 +1,11 @@
 package daos
 
 import (
-	"github.com/caarlos0/env"
 	"gopkg.in/pg.v5"
 	"fmt"
 	"errors"
+	"github.com/social-tournament-service/app/config"
 )
-
-type dbConfig struct{
-	DbName string `env:"DB_NAME"`
-	DbUser string `env:"DB_USER"`
-	DbPswd string `env:"DB_PASSWORD"`
-	DbHost string `env:"DB_HOST"`
-	DbPort string `env:"DB_PORT"`
-}
 
 type daos struct{
 	Player *PlayerDao
@@ -21,8 +13,8 @@ type daos struct{
 	Default *DefaultDao
 }
 
-func Init() (*daos, error){
-	db, err := initDB()
+func Init(cnf *config.Config) (*daos, error){
+	db, err := initDB(cnf.Db)
 	if err != nil{
 		return nil, err
 	}
@@ -34,22 +26,17 @@ func Init() (*daos, error){
 	
 	return &daos{
 		Player: &PlayerDao{db},
-		Tournament: &TournamentDao{db},
+		Tournament: &TournamentDao{db, cnf.MinPlayerPointsAmount},
 		Default: defaultDao,
 	}, nil
 }
 
-func initDB() (*pg.DB, error) {
-	dbCfg := dbConfig{}
-	if err := env.Parse(&dbCfg); err != nil{
-		return nil, err
-	}
-	
+func initDB(cnf config.DbConfig) (*pg.DB, error) {	
 	db := pg.Connect(&pg.Options{
-		Database: dbCfg.DbName,
-		Addr: fmt.Sprintf("%s:%s", dbCfg.DbHost, dbCfg.DbPort),
-		User: dbCfg.DbUser,
-		Password: dbCfg.DbPswd,
+		Database: cnf.DbName,
+		Addr: fmt.Sprintf("%s:%s", cnf.DbHost, cnf.DbPort),
+		User: cnf.DbUser,
+		Password: cnf.DbPswd,
 	})
 	if db == nil{
 		return nil, errors.New("Could not establish database connection")

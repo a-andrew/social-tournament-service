@@ -5,12 +5,15 @@ import (
 	h "github.com/social-tournament-service/app/http"
 	"github.com/social-tournament-service/app/handlers"
 	"github.com/social-tournament-service/app/services"
+	c "github.com/social-tournament-service/app/config"
 	"log"
 )
 
 func main(){
+	config := c.GetConfig()
+	
 	router := h.NewRouter()
-	daos, err := d.Init()
+	daos, err := d.Init(config)
 	if err != nil{
 		panic(err)
 	}
@@ -19,5 +22,5 @@ func main(){
 	handlers.InitTournamentHandler(router, services.NewTournamentService(daos.Tournament, daos.Player))
 	handlers.InitDefaultHandler(router, services.NewDefaultService(daos.Default))
 	
-	log.Fatal(router.Serve())
+	log.Fatal(router.Serve(config.Port))
 }

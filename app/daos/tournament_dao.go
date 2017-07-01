@@ -10,6 +10,7 @@ import (
 
 type TournamentDao struct {
 	db *pg.DB
+	MinPlayerPointsAmount int
 }
 
 func (d *TournamentDao) Create(tournament *models.Tournament) error{

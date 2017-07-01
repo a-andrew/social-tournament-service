@@ -7,9 +7,6 @@ import (
 	"fmt"
 )
 
-//TODO: move it out into config
-const MIN_PLAYER_POINTS_AMOUNT = 0
-
 type PlayerDao struct {
 	db *pg.DB
 }
