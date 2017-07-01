@@ -1,0 +1,24 @@
+version: '3'
+services:
+  db:
+    image: postgres:9.6
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+  social-tournament-service:
+    build: .
+    image: aandrew3/social-tournament-service:latest
+    restart: always
+    environment:
+      - DB_NAME=postgres
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+    ports:
+      - 80:8080
+    depends_on:
+      - db
+    command: ["social-tournament-service"]
